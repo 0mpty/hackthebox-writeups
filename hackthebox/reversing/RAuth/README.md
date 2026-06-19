@@ -1,7 +1,7 @@
 # RAuth - Reverse Engineering Writeup
 
 **Author:** Empty(0mpty)
-**Date:** 19.06.2026  
+**Date:** 19.06.2026
 **Difficulty:** Easy  
 **Category:** Reverse Engineering
 
@@ -24,8 +24,10 @@ We are given a binary file that asks for a password and, upon successful authent
 ## 1. Initial Analysis (Ghidra)
 
 Open the binary in Ghidra. In the strings list, we see the following prompts:
-Welcome to secure login portal!\nEnter the password to access the system:\n"
-"Successfully Authenticated\nFlag:\n"
+Welcome to secure login portal!
+Enter the password to access the system:
+Successfully Authenticated
+Flag:
 
 Searching for the password check logic leads to a function that uses `try_apply_keystream`. Static analysis reveals two code paths:
 
@@ -39,6 +41,7 @@ Searching for the password check logic leads to a function that uses `try_apply_
 ## 2. Patching (Bypassing the Check)
 
 We patch the conditional jump (`jz`/`jnz`) to force success. After patching, the program outputs:
+
 HTB{F4k3_f74g_4_t3s7ing}
 
 This is a **fake flag** placed by the author to mislead anyone who stops at simple patching.
@@ -52,13 +55,13 @@ This is a **fake flag** placed by the author to mislead anyone who stops at simp
 In the binary, we find the following constants:
 0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
 
+These are the Salsa20/20 initialization constants, which form the string `"expand 32-byte k"` when interpreted as ASCII bytes in little-endian order.
 
-These are the Salsa20/20 initialization constants (`"expand 32-byte k"`). Analyzing the internal state structure:
+Salsa20 uses an internal 4x4 matrix of 32-bit words. The initial state is constructed as follows:
 
-- Constants (4 words)
-- 32-byte key
-- 8-byte nonce
-- Counter (usually 0)
+![Salsa20 Matrix](screenshots/salsa20_matrix.png)
+
+We know that the matrix should begin with these constants (`"expa"`, `"nd 3"`, `"-byt"`, `"e k"`), so we search for this signature in memory.
 
 ![Salsa20 Constants](screenshots/salsa20_constants.png)
 
@@ -68,13 +71,7 @@ These are the Salsa20/20 initialization constants (`"expand 32-byte k"`). Analyz
 
 We run the binary in `edb` and set a breakpoint after the Salsa20 state is initialized, before the encryption rounds.
 
-In memory, we observe the state layout:
-0x61707865 0x3320646e 0x79622d32 0x6b206574 ← constants
-<key (16 bytes)>
-<nonce (8 bytes)>
-0x00000000 0x00000000 ← counter
-<second half of key (16 bytes)>
-0x61707865 0x3320646e 0x79622d32 0x6b206574 ← constants
+In memory, we locate the `"expa"` signature and extract the surrounding data. The full 32-byte key and 8-byte nonce are found adjacent to these constants.
 
 The extracted key is:
 TheCrucialRustEngineering@2021;)
@@ -91,10 +88,8 @@ We connect to the remote server:
 
 ```bash
 nc 154.57.164.83 31770
-
 Enter the password:
 TheCrucialRustEngineering@2021;)
-
 The server responds with:
 Successfully Authenticated
 Flag: HTB{...}
