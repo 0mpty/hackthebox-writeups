@@ -2,7 +2,7 @@
 
 **Author:** Empty(0mpty)
 **Date:** 19.06.2026
-**Difficulty:** Easy  
+**Difficulty:** Easy
 **Category:** Reverse Engineering
 
 ---
@@ -29,10 +29,7 @@ Enter the password to access the system:
 Successfully Authenticated
 Flag:
 
-Searching for the password check logic leads to a function that uses `try_apply_keystream`. Static analysis reveals two code paths:
-
-- `test BL, BL` → conditional jump to success or failure.
-- Successful path prints the flag.
+Searching for the password check logic leads to a `test BL, BL` instruction followed by a conditional jump to success or failure.
 
 ![Ghidra Analysis](screenshots/ghidra_analysis.png)
 
@@ -41,7 +38,6 @@ Searching for the password check logic leads to a function that uses `try_apply_
 ## 2. Patching (Bypassing the Check)
 
 We patch the conditional jump (`jz`/`jnz`) to force success. After patching, the program outputs:
-
 HTB{F4k3_f74g_4_t3s7ing}
 
 This is a **fake flag** placed by the author to mislead anyone who stops at simple patching.
@@ -52,7 +48,7 @@ This is a **fake flag** placed by the author to mislead anyone who stops at simp
 
 ## 3. Identifying the Algorithm
 
-In the binary, we find the following constants:
+In the binary, we find the following constants inside the `salsa20::core::Core<R>::new` function:
 0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
 
 These are the Salsa20/20 initialization constants, which form the string `"expand 32-byte k"` when interpreted as ASCII bytes in little-endian order.
@@ -74,9 +70,10 @@ We run the binary in `edb` and set a breakpoint after the Salsa20 state is initi
 In memory, we locate the `"expa"` signature and extract the surrounding data. The full 32-byte key and 8-byte nonce are found adjacent to these constants.
 
 The extracted key is:
-TheCrucialRustEngineering@2021;)
+f39f4f20e76e33bd25f4db338e81b10te
 
-This is a human-readable string, not a hash or raw binary data.
+The extracted nonce is:
+d4c270a3
 
 ![edb Debugger Memory View](screenshots/edb_memory.png)
 
@@ -90,6 +87,5 @@ We connect to the remote server:
 nc 154.57.164.83 31770
 Enter the password:
 TheCrucialRustEngineering@2021;)
-The server responds with:
 Successfully Authenticated
 Flag: HTB{...}
