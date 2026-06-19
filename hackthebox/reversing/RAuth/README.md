@@ -70,7 +70,7 @@ We run the binary in `edb` and set a breakpoint after the Salsa20 state is initi
 In memory, we locate the `"expa"` signature and extract the surrounding data. The full 32-byte key and 8-byte nonce are found adjacent to these constants.
 
 The extracted key is:
-f39f4f20e76e33bd25f4db338e81b10te
+ef39f4f20e76e33bd25f4db338e81b10te
 
 The extracted nonce is:
 d4c270a3
