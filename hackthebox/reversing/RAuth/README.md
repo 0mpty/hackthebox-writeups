@@ -85,6 +85,7 @@ Before the `salsa20::core::Core<R>::new` function, we locate the encrypted data 
 We extract the raw encrypted bytes from the binary.
 
 ![Encrypted Data](screenshots/encrypted_data.png)
+![Encrypted Data](screenshots/encrypted_data2.png)
 
 ---
 
