@@ -78,8 +78,24 @@ d4c270a3
 ![edb Debugger Memory View](screenshots/edb_memory.png)
 
 ---
+## 5. Extracting the Encrypted Data
 
-## 5. Testing on the HTB Server
+Before the `salsa20::core::Core<R>::new` function, we locate the encrypted data that is passed to the keystream function. This data is stored in memory and later XORed with the Salsa20 keystream to produce the flag.
+
+We extract the raw encrypted bytes from the binary.
+
+![Encrypted Data](screenshots/encrypted_data.png)
+
+---
+
+## 6. Decrypting the Flag with Python
+
+We write a Python script `rauth_script.py` that uses the extracted key and nonce to decrypt the encrypted data using Salsa20.
+Password: `TheCrucialRustEngineering@2021;)`
+
+---
+
+## 7. Testing on the HTB Server
 
 We connect to the remote server:
 
