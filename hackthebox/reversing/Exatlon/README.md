@@ -11,7 +11,7 @@
 
 - Ghidra — static analysis
 - edb (or gdb) — debugging
-- UPX
+- UPX — unpacking
 
 ---
 
