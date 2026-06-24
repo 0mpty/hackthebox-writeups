@@ -33,7 +33,7 @@ After unpacking, the binary becomes much more readable in Ghidra.
 
 Opening the unpacked binary in Ghidra reveals an array of encrypted values that the input is compared against. However, the decompiler doesn't clearly show the encryption logic.
 
-https://screenshots/ghidra_main.png
+![Ghidra Analysis](screenshots/ghidra_main.png)
 
 The encrypted values appear as:
 ``1152 1344 1056 1968 1728 816 1648 784 1584 816 1728 1520 1840 1664 784 1632 1856 1520 1728 816 1632 1856 1520 784 1760 1840 1824 816 1584 1856 784 1776 1760 528 528 2000``
