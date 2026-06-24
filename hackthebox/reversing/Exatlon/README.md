@@ -5,16 +5,73 @@
 **Difficulty:** Easy 
 **Category:** Reverse Engineering
 
-**Tools:** UPX, Ghidra, GDB/edb, Python
+---
+
+## Tools Used
+
+- Ghidra — static analysis
+- edb (or gdb) — debugging
+- UPX
+
+---
 
 ## Description
-Binary packed with UPX. After unpacking, it asks for password and validates using bit shifting encryption.
 
-## Analysis
-1. **Unpack UPX:** `upx -d exatlon`
-2. **Ghidra:** Initial static analysis shows encrypted values but decompiler doesn't clearly reveal the encryption logic
-3. **GDB Dynamic Analysis:** Setting breakpoints and analyzing registers reveals the key instruction `shl eax, 4` - each character is shifted left by 4 bits (multiplied by 16)
-4. **Understanding the Data:** The string of numbers `1152 1344 1056 1968 1728 816 1648 784 1584 816 1728 1520 1840 1664 784 1632 1856 1520 1728 816 1632 1856 1520 784 1760 1840 1824 816 1584 1856 784 1776 1760 528 528 2000` contains encrypted characters where each number represents one ASCII character multiplied by 16
+We are given a binary file that has been packed with UPX. After unpacking, we discover it asks for a password and upon successful authentication, prints the flag. 
+The binary uses a custom encryption algorithm based on bit shifting to validate the password.
 
-## Decryption Script
-The encryption algorithm is implemented in `exatlon_v1_script.py`
+---
+
+## 1. Initial Analysis - Unpacking UPX
+
+The first challenge is that the binary is packed with UPX.
+After unpacking, the binary becomes much more readable in Ghidra.
+
+---
+
+## 2. Static Analysis with Ghidra
+
+Opening the unpacked binary in Ghidra reveals an array of encrypted values that the input is compared against. However, the decompiler doesn't clearly show the encryption logic.
+
+https://screenshots/ghidra_main.png
+
+The encrypted values appear as:
+``1152 1344 1056 1968 1728 816 1648 784 1584 816 1728 1520 1840 1664 784 1632 1856 1520 1728 816 1632 1856 1520 784 1760 1840 1824 816 1584 1856 784 1776 1760 528 528 2000``
+
+Each number represents one encrypted character.
+
+![Ghidra Analysis](screenshots/ghidra_encrypted.png)
+
+---
+
+## 3. Dynamic Analysis with GDB
+
+Since the decompiler doesn't clearly reveal the encryption logic, we use dynamic analysis. Setting breakpoints and analyzing registers during runtime reveals the key instruction:
+
+``shl eax, 4``
+
+This indicates that each character is being shifted left by 4 bits (multiplied by 16).
+
+![edb Debugger](screenshots/gdb_breakpoint.png)
+
+---
+
+## 4. Understanding the Encryption
+
+The encryption algorithm works as follows.
+
+For example:
+
+    'H' = 0x48 = 72 → 72 * 16 = 1152 ✓
+
+    'T' = 0x54 = 84 → 84 * 16 = 1344 ✓
+
+    'B' = 0x42 = 66 → 66 * 16 = 1056 ✓
+
+    '{' = 0x7B = 123 → 123 * 16 = 1968 ✓
+
+---
+
+## 5. Decryption Script
+
+The decryption algorithm is implemented in exatlon_v1_script.py.
