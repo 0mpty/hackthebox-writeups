@@ -102,8 +102,6 @@ This pattern reveals the flag structure. Ignoring the constant parts HTB{ and },
 
     4th char: 'n', 'c', or '|'
 
-![Ghidra Analysis](screenshots/regex_pattern.png)
-
 ---
 
 ## 4. The Second Validation Layer
@@ -153,7 +151,8 @@ Subsequent constants are found by adding `0x10` to the previous address:
 
 Each part of the password must produce a product matching its corresponding constant. The values continue at `0x190`, `0x1A0`, and so on, until all parts are validated.
 
-![Ghidra Analysis](screenshots/assembly_constants.png)
+![Ghidra Analysis](screenshots/assembly_constants1.png)
+![Ghidra Analysis](screenshots/assembly_constants2.png)
 
 ---
 
