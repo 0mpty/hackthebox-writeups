@@ -10,7 +10,7 @@
 ## Tools Used
 
 - Ghidra — static analysis and decompilation
-- GDB (or edb) — debugging
+- EDB (or gdb) — debugging
 - Python — brute-force script for password recovery
 
 ---
