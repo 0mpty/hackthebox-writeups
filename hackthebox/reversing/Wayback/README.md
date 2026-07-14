@@ -72,6 +72,8 @@ Looking deeper at the assembly, we can see how `rand()` is called and the modulo
 
 The binary is compiled against `libc.so.6`. When generating the seed in Python, we must account for different time representations.
 
+![Ghidra Analysis](screenshots/libc.png)
+
 ### The Year 1900 Issue
 
 C's struct tm handles years differently, but more importantly, we need to ensure Python generates the exact same seed as the C binary would on the target date.
