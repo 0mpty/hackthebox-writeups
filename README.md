@@ -3,8 +3,7 @@
 Welcome to my repository dedicated to solving Cybersecurity and Capture The Flag (CTF) challenges! 
 
 This repository serves as my personal knowledge base and a portfolio of my technical journey. I focus primarily on two intellectually stimulating disciplines:
-* **Reverse Engineering (Reverse):** Disassembling compiled binaries, analyzing control flow, understanding low-level code structure, and bypassing authentication mechanisms.
-* **Cryptography (Crypto):** Breaking ciphers, analyzing cryptographic flaws, implementing mathematical attacks, and identifying weak implementations.
+* **Reverse Engineering (Reversing):** Disassembling compiled binaries, analyzing control flow, understanding low-level code structure, and bypassing authentication mechanisms.
 
 Every writeup here documents my step-by-step thinking process, the methodologies used, and the custom automation scripts I built along the way.
 
