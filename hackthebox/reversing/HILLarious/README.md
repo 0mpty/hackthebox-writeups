@@ -1,1 +1,87 @@
+# HILLarious - Reverse Engineering Writeup
 
+**Author:** Empty(0mpty)
+**Date:** 28.08.2026
+**Difficulty:** Medium
+**Category:** Reversing
+
+---
+
+## Tools Used
+
+- Ghidra — static analysis and decompilation
+- EDB — debugging
+- Python — write script for beginning
+- C++ — write a decoder
+
+---
+
+## Description
+
+We have a encrypter and we must create a decrypter.
+
+---
+
+## 1. Initial Analysis (Ghidra)
+
+Opening the encrypter in Ghidra, we see how the encrypter check the input command is correct. Pass the check and you in the main function.
+
+![Ghidra Analysis](screenshots/main_function.png)
+
+We see two function: `FUN_001017b0` and `FUN_00101680`. The function `FUN_001017b0` just take a text and write in `pvVar2`. The function `FUN_00101680` decrypt text. We also have `local_70 - lenght of text`, `local_58 - main constant` and `local_54 - time`(Do not forget the local_54. We need it in neer future!!!).
+
+---
+
+## 2. Getting the first array
+
+We follow to the `FUN_00101680` and we see two functions: `FUN_001015d0` and `FUN_001013d0`. You might spot two arrays: `local_44(length is 4)` and `local_30(length is 8)`. That arrays are the most important, because the encrypter will use that for encrypt a text.
+
+![Ghidra Analysis](screenshots/getting_first_array_1.png)
+
+To get the first array we get `uVar5`, `uVar7` and do some operations. `uVar7` is a constant, `uVar5`? What is it? Decompilater just take `param_1(0x52414e53)` and plus `4`, but why? I will say that author of encrypter call the `local_54` using a special method. He call the `local_54` using `neer object(local_58)`. `local_54 = local_58 + 4`. `uVar5` is a time!!!(You can check it using a debugger). When we get a updated uVar7, we follow to `FUN_001015d0`
+
+![Ghidra Analysis](screenshots/getting_first_array_2.png)
+
+There is we fill `the first array(local_30)`.
+
+---
+
+## 3. Getting the second array
+
+There is we see some operations using the updated `uVar7`. The second array will fill in the function end.
+
+![Ghidra Analysis](screenshots/getting_second_array_1.png)
+
+---
+
+## 4. The first part of main encrypting
+
+The next we follow to `FUN_001013d0`. There is we see the `FUN_00101340`. This function just check local_44 is correct. We scroll down and see encrypting algorithm.
+
+![Ghidra Analysis](screenshots/main_algorithm_1.png)
+
+Remember that: `__nmemb is lenght of text`, `__dest is an characters array(every elements are character of text. Encrypter use memcpy to fill the __dest)`, 
+`pvVar8 is an array`
+
+You must spot that before we append result in the `pvVar8` we get the byte(0xff) or character.
+
+---
+
+## 5. The second part of main encrypting
+
+There is The last part of encrypting algorithm. We create an empty array `pvVar3` and fill it. We get element of `local_30` and XOR with `pvVar8(__ptr = pvVar8)`. 
+
+![Ghidra Analysis](screenshots/main_algorithm_2.png)
+
+---
+
+## 6. Finish
+
+The encrypter get 0x14 byte(SNAR + Stack trash + encrypted text). When you write a decrypter, simply ignor this.
+And..... Finish!!! That is all!! I hope my write up helps solve this problem.
+
+---
+
+## 7. Mydecoders
+
+I write a decoder using C++. Decoder name is `DeHill`. `Usage: ./DeHill decode <YourFileName>`. Also I write a python script `ransom_script.py`. A python script work, but it may contains errors!
