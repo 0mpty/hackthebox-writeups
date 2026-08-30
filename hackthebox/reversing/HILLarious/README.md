@@ -28,7 +28,7 @@ Opening the encrypter in Ghidra, we see how the encrypter check the input comman
 
 ![Ghidra Analysis](screenshots/main_function.png)
 
-We see two function: `FUN_001017b0` and `FUN_00101680`. The function `FUN_001017b0` just take a text and write in `pvVar2`(loal_70 = text length). The function `FUN_00101680` decrypt text. We also have `local_70 - lenght of text`, `local_58 - main constant` and `local_54 - time`(Do not forget the local_54. We need it in neer future!!!).
+We see two function: `FUN_001017b0` and `FUN_00101680`. The function `FUN_001017b0` just take a text and write in `pvVar2(local_70 = text length)`. The function `FUN_00101680` decrypt text. We also have `local_70 - lenght of text`, `local_58 - main constant` and `local_54 - time`(Do not forget the local_54. We need it in neer future!!!).
 
 ---
 
